@@ -18,14 +18,12 @@ from tqdm import tqdm
 from PyPDF2 import PdfReader
 from sentence_transformers import SentenceTransformer
 
-# Configure logging
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-# Suppress warnings
 warnings.filterwarnings("ignore")
 
 
@@ -74,11 +72,9 @@ class VectorStore:
             embeddings = encoder.encode(texts, convert_to_numpy=True)
             new_chunks.extend(batch)
             new_embeddings.extend(embeddings)
-            # Optionally, adjust gc.collect frequency as needed
             gc.collect()
 
         if new_embeddings:
-            # FAISS requires float32
             embeddings_array = np.array(new_embeddings, dtype="float32")
             self.index.add(embeddings_array)
             self.chunks.extend(new_chunks)
@@ -132,7 +128,6 @@ class VectorStore:
         """
         if not self.chunks:
             return []
-        # Ensure query embedding is in float32
         query_embedding = query_embedding.astype("float32")
         distances, indices = self.index.search(query_embedding.reshape(1, -1), min(top_k, len(self.chunks)))
         return [self.chunks[i] for i in indices[0] if i != -1]
