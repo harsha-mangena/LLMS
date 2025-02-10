@@ -17,6 +17,7 @@ import tiktoken
 from tqdm import tqdm
 from PyPDF2 import PdfReader
 from sentence_transformers import SentenceTransformer
+import fickling
 
 logging.basicConfig(
     level=logging.INFO,
@@ -107,7 +108,7 @@ class VectorStore:
             if index_file.exists() and chunks_file.exists():
                 self.index = faiss.read_index(str(index_file))
                 with open(chunks_file, "rb") as f:
-                    self.chunks = pickle.load(f)
+                    self.chunks = fickling.load(f)
                 logger.info(f"Loaded {len(self.chunks)} chunks from '{self.index_path}'.")
         except Exception as e:
             logger.error(f"Error loading vectors: {e}")
